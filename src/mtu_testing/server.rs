@@ -1,6 +1,6 @@
 use std::net::{SocketAddr, TcpListener};
 use crate::data::models::TestParameters;
-use crate::messages::{Message, send_message, receive_message};
+use crate::network::messages::{Message, send_message, receive_message};
 use crate::network::iperf::check_iperf_installed;
 use crate::network::iperf::start_iperf_server;
 use crate::network::mtu::set_mtu;

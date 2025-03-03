@@ -1,7 +1,6 @@
 mod cli;
 mod data;
 mod heatmap;
-mod messages;
 mod mtu_testing;
 mod network;
 mod utils;

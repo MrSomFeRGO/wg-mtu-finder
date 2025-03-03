@@ -2,7 +2,7 @@ use std::process::Command;
 use std::thread;
 use std::time::Duration;
 use std::net::TcpStream;
-use crate::messages::{Message, receive_message};
+use crate::network::messages::{Message, receive_message};
 
 // Функция для установки MTU на интерфейсе
 pub fn set_mtu(interface: &str, mtu: u32) {

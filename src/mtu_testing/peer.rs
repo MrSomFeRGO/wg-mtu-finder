@@ -1,6 +1,6 @@
 use std::net::TcpStream;
 use crate::data::models::{MtuTestResult, PeerParameters};
-use crate::messages::{Message, send_message, receive_message};
+use crate::network::messages::{Message, send_message, receive_message};
 use crate::network::iperf::{check_iperf_installed, run_iperf_test};
 use crate::network::mtu::{get_remote_mtu, set_mtu};
 use crate::utils::csv_utils::{create_csv_file, save_result_to_csv};
