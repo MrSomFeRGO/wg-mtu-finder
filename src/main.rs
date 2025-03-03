@@ -5,34 +5,64 @@ mod mtu_testing;
 mod network;
 mod utils;
 
-use crate::cli::parse_args::{create_cli_app, create_default_values, parse_heatmap_params, parse_peer_params, parse_server_params};
+use crate::cli::{Cli, Commands};
 use crate::heatmap::generate_heatmap;
 use crate::mtu_testing::{run_peer, run_server};
+use clap::Parser;
+use crate::data::models::{HeatmapParameters, PeerParameters, TestParameters};
 
 fn main() {
-    // Создаем параметры по умолчанию
-    let default_values = create_default_values();
-
     // Парсим аргументы командной строки
-    let matches = create_cli_app(&default_values).get_matches();
+    let cli = Cli::parse();
 
     // Запускаем соответствующий режим
-    match matches.subcommand() {
-        ("server", Some(server_matches)) => {
-            let params = parse_server_params(server_matches);
-            run_server(params);
+    match &cli.command {
+        Commands::Server {
+            interface,
+            min_mtu,
+            max_mtu,
+            step,
+            server_port,
+            iperf_port,
+        } => {
+            run_server(TestParameters {
+                interface: interface.clone(),
+                min_mtu: *min_mtu,
+                max_mtu: *max_mtu,
+                step: *step,
+                control_port: *server_port,
+                iperf_port: *iperf_port,
+            });
         }
-        ("peer", Some(peer_matches)) => {
-            let params = parse_peer_params(peer_matches);
-            run_peer(params);
+        Commands::Peer {
+            interface,
+            server_ip,
+            server_port,
+            iperf_port,
+            min_mtu,
+            max_mtu,
+            step,
+            csv_file,
+        } => {
+            run_peer(PeerParameters {
+                interface: interface.clone(),
+                server_ip: server_ip.clone(),
+                control_port: *server_port,
+                iperf_port: *iperf_port,
+                min_mtu: *min_mtu,
+                max_mtu: *max_mtu,
+                step: *step,
+                csv_file: csv_file.clone(),
+            });
         }
-        ("heatmap", Some(heatmap_matches)) => {
-            let params = parse_heatmap_params(heatmap_matches);
-            generate_heatmap(params).unwrap();
-        }
-        _ => {
-            println!("Please specify either 'server', 'peer' or 'heatmap' mode.");
-            println!("Use --help for more information.");
+        Commands::Heatmap {
+            log_filepath,
+            heatmap_filepath,
+        } => {
+            generate_heatmap(HeatmapParameters {
+                log_filepath: log_filepath.clone(),
+                heatmap_filepath: heatmap_filepath.clone(),
+            }).unwrap();
         }
     }
 }
