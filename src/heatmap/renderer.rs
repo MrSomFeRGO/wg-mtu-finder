@@ -14,9 +14,9 @@ pub fn draw_heatmap<DB: DrawingBackend>(
 ) -> Result<(), HeatmapError> {
     // Create a chart with integer coordinates instead of segmented
     let mut chart_builder = ChartBuilder::on(area)
-        .caption(title, ("sans-serif", 42))
+        .caption(title, ("sans-serif", 48))
         .margin(5)
-        .x_label_area_size(90)
+        .x_label_area_size(60)
         .y_label_area_size(90)
         .build_cartesian_2d(0..peer_mtus.len(), 0..server_mtus.len())?;
 
@@ -37,7 +37,7 @@ pub fn draw_heatmap<DB: DrawingBackend>(
         })
         .x_desc("Peer MTU")
         .y_desc("Server MTU")
-        .axis_desc_style(("sans-serif", 26))
+        .axis_desc_style(("sans-serif", 32))
         .label_style(("sans-serif", 21))
         .draw()?;
 
@@ -87,11 +87,17 @@ pub fn draw_heatmap<DB: DrawingBackend>(
                     BLACK
                 };
 
-                // Center the text within the cell
+                let cell_count = peer_mtus.len().max(1) * server_mtus.len().max(1);
+                let font_size = match cell_count {
+                    0..=900 => 24,
+                    901..=1500 => 18,
+                    _ => 14,
+                };
+
                 Text::new(
                     format!("{:.1}", value),
                     (x_idx, y_idx + 1),
-                    ("sans-serif", 32).into_font().color(&text_color),
+                    ("sans-serif", font_size).into_font().color(&text_color),
                 )
             })
         },

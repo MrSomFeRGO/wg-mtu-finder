@@ -70,8 +70,14 @@ pub fn generate_heatmap(params: HeatmapParameters) -> Result<(), HeatmapError> {
     let max_download_rcv = max_positive_value(&download_rcv_map);
     let max_download_send = max_positive_value(&download_send_map);
 
-    // Draw the heatmap
-    let root = BitMapBackend::new(heatmap_filepath, (2600, 2600)).into_drawing_area();
+    let base_size = 1200;
+    let width_multiplier = (peer_mtus_sorted.len() as f32 / 10.0).max(1.0);
+    let height_multiplier = (server_mtus_sorted.len() as f32 / 10.0).max(1.0);
+
+    let width = (base_size as f32 * width_multiplier) as u32;
+    let height = (base_size as f32 * height_multiplier) as u32;
+
+    let root = BitMapBackend::new(heatmap_filepath, (width, height)).into_drawing_area();
 
     root.fill(&WHITE)?;
 
